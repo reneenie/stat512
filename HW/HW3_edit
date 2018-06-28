@@ -1,0 +1,4 @@
+proc univariate data=data2 plot(odstitle2='Question 2: GPA Study');
+var ACTscore;
+label ACTscore='ACT Score';run;
+ods graphics off;
