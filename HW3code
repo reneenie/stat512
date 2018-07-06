@@ -1,0 +1,145 @@
+*Question 1;
+data data1;
+input C V;
+cards;
+0.02 76
+;
+proc print data=data1;run;
+
+*Question 1a;
+title1 'Scatter plot of Rate(V) vs Concentration(C) (sm=70)';
+title2 'Question 1: Enzymatic study-Lei Nie';
+axis1 label=('Substrate Concentration (C)');
+axis2 label=(angle=90 'Rate of Enzymatic Reaction (V)');
+symbol1 v=circle i=sm70;
+proc gplot data=data1;
+plot V*C/haxis=axis1 vaxis=axis2;run;
+
+*Question 1b;
+data data1b;
+set data1;
+vinv=1/V;
+cinv=1/C;run;
+title1 'Scatter plot of Inverted Rate vs Inverted Concentration (sm=90)';
+title2 'Question 1: Enzymatic study-Lei Nie';
+axis1 label=('Inverted Substrate Concentration (C)');
+axis2 label=(angle=90 'inverted Rate of Enzymatic Reaction (V)');
+symbol1 v=circle i=sm90;
+proc gplot data=data1b;
+plot vinv*cinv/haxis=axis1 vaxis=axis2;run;
+
+*Question 1c;
+ods graphics on;
+title1 'Histogram of Substrate Concentration (C)';
+title2 'Question 1: Enzymatic study-Lei Nie';
+proc univariate data=data1;
+var C;
+histogram C/normal odstitle=title1 odstitle2=title2;
+label C='Substrate Concentration (C)';run;
+title1 'Histogram of Inverted Substrate Concentration (1/C)';
+title2 'Question 1: Enzymatic study-Lei Nie';
+proc univariate data=data1b;
+var cinv;
+histogram cinv/normal odstitle=title1 odstitle2=title2;
+label cinv='Inverted Substrate Concentration (1/C)';run;
+ods graphics off;
+
+*Question 1d;
+proc reg data=data1b;
+model vinv=cinv;
+output out=out1 r=resid p=pred;run;
+symbol1 v=circle i=rl;
+title1 'Residual Plot for 1/V vs 1/C';
+title2 'Question 1: Enzymatic study-Lei Nie';
+axis1 label=('Inverted Substrate Concentration (C)');
+proc gplot data=out1;
+plot resid*cinv/vref=0 haxis=axis1;run;
+
+*Question 1e;
+data invert;
+set out1;
+predv = 1/pred;
+symbol1 v = circle i = none c = black;
+symbol2 v = plus i = sm5 c = red;
+title1 'Converted Prediction Curve for V vs C';
+title2 'Question 1: Enzymatic study-Lei Nie';
+axis1 label=('Substrate Concentration (C)');
+axis2 label=(angle=90 'Rate of Enzymatic Reaction (V)');
+proc gplot data = invert;
+plot V*C predv*C /haxis=axis1 vaxis=axis2 overlay;run;
+
+*Question 2/3/4;
+data data2;
+input GPA ACTscore;
+seq=_n_;
+datalines;
+ 3.897    21
+ 2.948    28
+ ;
+ proc print data=data2;run;
+
+*Question 2;
+ods graphics on;
+proc univariate data=data2 plot(odstitle2='Question 2: GPA Study-Lei Nie');
+var ACTscore;
+label ACTscore='ACT Score';run;
+ods graphics off;
+
+*Question 3a;
+proc reg data=data2;
+model GPA=ACTscore;
+output out=out2 r=resid p=pred;run;
+proc univariate data=out2;
+var resid;run;
+
+*Question 3b;
+title1 'Residual Plot for GPA vs ACTscore';
+title2 'Question 3: GPA Study-Lei Nie';
+proc gplot data=out2;
+plot resid*ACTscore / vref=0;run;
+
+*Question 3c;
+title1 'Sequence Plot for Residual';
+title2 'Question 3: GPA Study-Lei Nie';
+axis1 label=('Sequence of Observation');
+proc gplot data=out2;
+plot resid*seq/ haxis=axis1 vref=0;run;
+
+*Question 3d;
+title1 'QQ plot for Residual';
+title2 'Question 3: GPA Study-Lei Nie';
+proc univariate data=out2;
+var resid;
+histogram resid / normal kernel(L=2);
+qqplot resid /normal (L=1 mu=est sigma=est);run;
+
+*Question 4;
+data data4;
+set data2;
+if seq eq 120 then GPA = 29.48; 
+proc print data=data4;run;
+*Question 4a;
+proc reg data=data4;
+model GPA=ACTscore;
+output out=out4 r=resid p=pred;run;
+
+*Question 4b;
+title1 'Residual Plot of GPA vs ACT';
+title2 'Question 4: GPA Study-Lei Nie';
+proc gplot data=out4;
+plot resid*ACTscore / vref=0;run;
+
+*Question 4c;
+title1 'Sequence Plot for Residual';
+title2 'Question 4: GPA Study-Lei Nie';
+axis1 label=('Sequence of Observation');
+proc gplot data=out4;
+plot resid*seq/ haxis=axis1 vref=0;run;
+
+*Question 4d;
+title1 'QQ plot for Residual';
+title2 'Question 4: GPA Study-Lei Nie';
+proc univariate data=out4;
+var resid;
+histogram resid / normal kernel(L=2);
+qqplot resid /normal (L=1 mu=est sigma=est);run;
