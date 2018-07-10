@@ -116,7 +116,7 @@ qqplot resid /normal (L=1 mu=est sigma=est);run;
 *Question 4;
 data data4;
 set data2;
-if seq eq 120 then GPA = 29.48; 
+if seq eq 120 then GPA = 29.48;
 proc print data=data4;run;
 *Question 4a;
 proc reg data=data4;
@@ -143,3 +143,6 @@ proc univariate data=out4;
 var resid;
 histogram resid / normal kernel(L=2);
 qqplot resid /normal (L=1 mu=est sigma=est);run;
+
+
+/*Seriously, what is it with this desktop thing, am I login using the right account?*/
